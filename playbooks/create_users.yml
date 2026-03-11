@@ -1,0 +1,45 @@
+---
+
+- hosts: servers
+  become: True
+  vars_files:
+    - vars/secrets.yml
+
+  vars:
+    users:
+      - name: user1
+        key: "{{ user1_ssh_key }}"
+      - name: user2
+        key: "{{ user2_ssh_key }}"
+      - name: user3
+        key: "{{ user3_ssh_key }}"
+
+
+  tasks:
+    - name: Create users
+      ansible.builtin.user:
+        name: "{{ item.name }}"
+        shell: /bin/bash
+        create_home: yes
+        state: present
+        groups: sudo
+        append: yes
+      loop: "{{ users }}"
+
+
+    - name: Add SSH keys
+      ansible.builtin.authorized_key:
+        user: "{{ item.name }}"
+        key: "{{ item.key  }}"
+      loop: "{{ users }}"
+
+
+    - name: Allow user to execute sudo without password
+      ansible.builtin.copy:
+        dest: /etc/sudoers.d/20-dev
+        content: "{{ item.name }} ALL=(ALL) NOPASSWD:ALL"
+        mode: '0440'
+        owner: root
+        group: root
+        validate: /usr/sbin/visudo -cf %s
+      loop: "{{ users }}"
