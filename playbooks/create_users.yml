@@ -2,6 +2,8 @@
 
 - hosts: servers
   become: True
+  # turning off facts from os
+  gather_facts: false
 
   tasks:
     - name: Create users
@@ -11,16 +13,18 @@
         create_home: yes
         state: present
         groups: sudo,docker
-        append: yes
+        append: True
       loop: "{{ users }}"
-      register: user_creation_result
-
+      loop_control:
+        label: "{{ item.name }}"
 
     - name: Add SSH keys
-      ansible.builtin.authorized_key:
+      ansible.posix.authorized_key:
         user: "{{ item.name }}"
         key: "{{ item.key  }}"
       loop: "{{ users }}"
+      loop_control:
+        label: "{{ item.name }}"
 
 
     - name: Allow user to execute sudo without password
@@ -32,3 +36,6 @@
         group: root
         validate: /usr/sbin/visudo -cf %s
       loop: "{{ users }}"
+      # show file direction
+      loop_control:
+        label: "/etc/sudoers.d/{{ item.name }}"
