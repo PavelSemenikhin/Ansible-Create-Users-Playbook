@@ -22,7 +22,7 @@
         shell: /bin/bash
         create_home: yes
         state: present
-        groups: sudo
+        groups: sudo,docker
         append: yes
       loop: "{{ users }}"
 
