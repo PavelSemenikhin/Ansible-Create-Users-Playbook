@@ -16,13 +16,6 @@
       register: user_creation_result
 
 
-    - name: Display created users
-      debug:
-        msg: "User {{ item.name }} created successfully"
-      loop: "{{ users }}"
-      when: item.changed
-
-
     - name: Add SSH keys
       ansible.builtin.authorized_key:
         user: "{{ item.name }}"
