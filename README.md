@@ -40,11 +40,6 @@ This playbook provisions a new user under the `servers` group, creating their ho
    ```
    ansible-playbook -i inventory/hosts.yml playbooks/create_users.yml --check --limit server1
    ```
-   ```
-3. After a successful run:
-   - `getent passwd developer` confirms the account exists.
-   - `sudo cat /etc/sudoers.d/developer` validates sudo permissions.
-   - `sudo cat /home/developer/.ssh/authorized_keys` checks the uploaded key.
 
 ## Example `inventory/host_vars/server1.yml`
 ```yaml
