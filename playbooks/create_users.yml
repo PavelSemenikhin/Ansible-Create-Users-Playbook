@@ -13,7 +13,14 @@
         groups: sudo,docker
         append: yes
       loop: "{{ users }}"
+      register: user_creation_result
 
+
+    - name: Display created users
+      debug:
+        msg: "User {{ item.name }} created successfully"
+      loop: "{{ users }}"
+      when: user_creation_result is changed
 
     - name: Add SSH keys
       ansible.builtin.authorized_key:
