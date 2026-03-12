@@ -6,7 +6,7 @@
   gather_facts: false
 
   tasks:
-    - name: Create users
+    - name: Manage users
       ansible.builtin.user:
         name: "{{ item.name }}"
         shell: /bin/bash
